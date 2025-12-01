@@ -1,0 +1,4 @@
+Year,Symbol,Category,Cheap,Fair,Expensive,Close
+2023,AAPL,Technology,invalid,150.00,180.25,145.30
+2023,GOOGL,Technology,90.00,not_a_number,130.00,108.75
+2023,MSFT,Technology,250.00,300.00,N/A,295.50
