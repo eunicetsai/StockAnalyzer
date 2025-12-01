@@ -15,7 +15,8 @@ from ui_components import (
     render_data_table,
     show_error,
     show_warning,
-    show_column_detection_error
+    show_info,
+    show_validation_errors
 )
 
 # Page configuration
@@ -30,11 +31,23 @@ uploaded_file = render_file_uploader()
 if uploaded_file is not None:
     try:
         # Load and process data
-        df, col_map, missing_cols = load_and_process_data(uploaded_file)
+        df, col_map, validation_result = load_and_process_data(uploaded_file)
         
-        if missing_cols:
-            show_column_detection_error(missing_cols, df.columns.tolist())
+        # Check for validation errors
+        if validation_result and not validation_result.is_valid():
+            # Get detected columns if available
+            detected_cols = None
+            if col_map:
+                detected_cols = [v for v in col_map.values() if v is not None]
+            
+            # Show detailed validation errors
+            show_validation_errors(validation_result, detected_cols)
             st.stop()
+        
+        # Show warnings if any (but continue processing)
+        if validation_result and validation_result.has_warnings():
+            show_validation_errors(validation_result)
+            st.markdown("---")
         
         # Render filters
         selected_year, mode = render_filters(df, col_map)
@@ -85,3 +98,4 @@ if uploaded_file is not None:
     
     except Exception as e:
         show_error(f"An error occurred while processing the file: {e}")
+        st.exception(e)

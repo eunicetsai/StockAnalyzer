@@ -4,6 +4,13 @@ Handles CSV loading, column mapping, and data cleaning.
 """
 import pandas as pd
 import re
+from validators import (
+    COLUMN_NAMES,
+    ValidationResult,
+    validate_csv_structure,
+    validate_required_columns,
+    validate_data_quality
+)
 
 
 def clean_currency(x):
@@ -32,53 +39,80 @@ def map_columns(df):
     """Auto-detect and map CSV columns to expected fields."""
     columns = df.columns.tolist()
     
-    col_map = {
-        "Year": find_column(["Year", "年度"], columns),
-        "Category": find_column(["Category", "Sector", "Industry", "分類", "類別", "產業"], columns),
-        "Symbol": find_column(["Symbol", "Stock", "代號", "股票"], columns),
-        "Cheap": find_column(["Cheap", "便宜"], columns),
-        "Fair": find_column(["Fair", "合理"], columns),
-        "Expensive": find_column(["Expensive", "昂貴"], columns),
-        "Close": find_column(
-            ["Closing Price", "Close Price", "收盤價", "Close", "Closing", "收盤"], 
-            columns, 
-            exclude=["Date", "日期"]
-        )
-    }
+    col_map = {}
+    for field, config in COLUMN_NAMES.items():
+        keywords = config["keywords"]
+        exclude = config.get("exclude", None)
+        col_map[field] = find_column(keywords, columns, exclude)
     
     return col_map
-
-
-def validate_columns(col_map):
-    """Check if required columns are present."""
-    missing = [k for k, v in col_map.items() if v is None and k != "Category"]
-    return missing
 
 
 def clean_data(df, col_map):
     """Clean and standardize data types."""
     # Year as string
-    df[col_map["Year"]] = df[col_map["Year"]].astype(str).str.replace(r'\.0$', '', regex=True)
+    if col_map["Year"]:
+        df[col_map["Year"]] = df[col_map["Year"]].astype(str).str.replace(r'\.0$', '', regex=True)
     
     # Symbol as string, stripped
-    df[col_map["Symbol"]] = df[col_map["Symbol"]].astype(str).str.strip()
+    if col_map["Symbol"]:
+        df[col_map["Symbol"]] = df[col_map["Symbol"]].astype(str).str.strip()
     
     # Clean price columns
-    price_cols = [col_map["Cheap"], col_map["Fair"], col_map["Expensive"], col_map["Close"]]
-    for col in price_cols:
-        df[col] = df[col].apply(clean_currency)
+    price_fields = ["Cheap", "Fair", "Expensive", "Close"]
+    for field in price_fields:
+        col_name = col_map.get(field)
+        if col_name:
+            df[col_name] = df[col_name].apply(clean_currency)
     
     return df
 
 
 def load_and_process_data(uploaded_file):
-    """Main function to load and process uploaded CSV file."""
-    df = pd.read_csv(uploaded_file)
+    """
+    Main function to load and process uploaded CSV file.
+    
+    Returns:
+        Tuple of (df, col_map, validation_result)
+        - df: Processed DataFrame (None if validation failed)
+        - col_map: Column mapping dictionary
+        - validation_result: ValidationResult object with errors/warnings
+    """
+    # Load CSV
+    try:
+        df = pd.read_csv(uploaded_file)
+    except Exception as e:
+        result = ValidationResult()
+        result.add_error("FILE_READ_ERROR", "CSV", 
+                        f"Failed to read CSV file: {str(e)}",
+                        "Please ensure the file is a valid CSV format.")
+        return None, None, result
+    
+    # Validate CSV structure
+    validation_result = validate_csv_structure(df)
+    if not validation_result.is_valid():
+        return None, None, validation_result
+    
+    # Map columns
     col_map = map_columns(df)
-    missing = validate_columns(col_map)
     
-    if missing:
-        return None, col_map, missing
+    # Validate required columns
+    column_validation = validate_required_columns(col_map)
+    if not column_validation.is_valid():
+        return None, col_map, column_validation
     
+    # Clean data
     df = clean_data(df, col_map)
-    return df, col_map, None
+    
+    # Validate data quality
+    quality_validation = validate_data_quality(df, col_map)
+    
+    # Combine validation results
+    validation_result.errors.extend(quality_validation.errors)
+    validation_result.warnings.extend(quality_validation.warnings)
+    
+    # Return data even if there are warnings (but not errors)
+    if not validation_result.is_valid():
+        return None, col_map, validation_result
+    
+    return df, col_map, validation_result

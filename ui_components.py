@@ -3,6 +3,7 @@ UI components module for financial analysis.
 Handles Streamlit UI elements and user interactions.
 """
 import streamlit as st
+from validators import ValidationResult
 
 
 def render_header():
@@ -66,7 +67,53 @@ def show_warning(message):
     st.warning(message)
 
 
+def show_info(message):
+    """Display info message."""
+    st.info(message)
+
+
+def show_validation_errors(validation_result: ValidationResult, detected_columns=None):
+    """
+    Display detailed validation errors and warnings.
+    
+    Args:
+        validation_result: ValidationResult object containing errors and warnings
+        detected_columns: Optional list of detected column names from the CSV
+    """
+    # Display errors
+    if validation_result.errors:
+        st.error("❌ **Validation Errors Found**")
+        st.markdown("The following issues must be fixed before proceeding:")
+        
+        for i, error in enumerate(validation_result.errors, 1):
+            with st.expander(f"Error {i}: {error.field}", expanded=True):
+                st.markdown(f"**Issue:** {error.message}")
+                if error.suggestion:
+                    st.markdown(f"**Solution:** {error.suggestion}")
+        
+        # Show detected columns if available
+        if detected_columns:
+            st.markdown("---")
+            st.markdown("**Columns found in your CSV file:**")
+            st.code(", ".join(detected_columns))
+    
+    # Display warnings
+    if validation_result.warnings:
+        st.warning("⚠️ **Validation Warnings**")
+        st.markdown("The following issues were detected but won't prevent analysis:")
+        
+        for i, warning in enumerate(validation_result.warnings, 1):
+            with st.expander(f"Warning {i}: {warning.field}", expanded=False):
+                st.markdown(f"**Issue:** {warning.message}")
+                if warning.suggestion:
+                    st.markdown(f"**Note:** {warning.suggestion}")
+
+
+# Deprecated - keeping for backward compatibility
 def show_column_detection_error(missing_cols, detected_cols):
-    """Display column detection error with details."""
+    """
+    Display column detection error with details.
+    DEPRECATED: Use show_validation_errors instead.
+    """
     st.error(f"Could not identify the following columns: {', '.join(missing_cols)}")
     st.write("Detected columns:", detected_cols)
