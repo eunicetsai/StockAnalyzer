@@ -4,7 +4,7 @@ Tests validation functions for column checking, data quality, and CSV structure.
 """
 import pytest
 import pandas as pd
-from financial_analysis.validators import (
+from validators import (
     COLUMN_NAMES,
     ValidationError,
     ValidationResult,
