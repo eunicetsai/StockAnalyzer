@@ -6,7 +6,7 @@ import pytest
 import pandas as pd
 import os
 from io import StringIO
-from data_processor import (
+from stock_analyzer.data_processor import (
     clean_currency,
     find_column,
     map_columns,

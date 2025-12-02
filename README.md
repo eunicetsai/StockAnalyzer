@@ -1,4 +1,4 @@
-# Financial Analysis & Valuation Visualization
+# Stock Analyzer
 
 A Streamlit application for analyzing and visualizing financial data with comprehensive data validation, supporting both English and Chinese column names.
 
@@ -7,34 +7,38 @@ A Streamlit application for analyzing and visualizing financial data with compre
 - 📊 **Interactive Visualizations**: Single stock analysis and category comparison charts
 - ✅ **Comprehensive Validation**: Detailed error messages for missing columns and data quality issues
 - 🌐 **Multi-language Support**: Works with both English and Chinese column names (年度, 代號, 合理價, etc.)
-- 🧪 **Well-tested**: 52 test cases with 87-90% code coverage
+- 🧪 **Well-tested**: 52 test cases with high code coverage
 - 📈 **Price Analysis**: Compare cheap, fair, and expensive prices with closing prices
 
 ## Installation
 
 1. Clone the repository:
-```bash
-git clone <repository-url>
-cd financial_analysis
-```
-
+   ```bash
+   git clone <repository-url>
+   cd stock-analyzer
+   ```
 2. Create a virtual environment:
-```bash
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate
+   ```
 3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Usage
 
 ### Running the Application
 
+1. Change directory to the application source code
 ```bash
-streamlit run src/financial_analysis/app.py
+cd src/stock_analyzer
+```
+
+2. Start the Streamlit application
+```bash
+python3 -m streamlit run app.py
 ```
 
 The application will open in your default web browser at `http://localhost:8501`.
@@ -66,13 +70,11 @@ Run all tests:
 ```bash
 pytest tests/ -v
 ```
-
 Run with coverage report:
 ```bash
-pytest tests/ --cov=src/financial_analysis --cov-report=term-missing
+pytest tests/ --cov=src/stock_analyzer --cov-report=term-missing
 ```
-
-Run specific test file:
+Run a specific test file:
 ```bash
 pytest tests/test_validators.py -v
 ```
@@ -80,10 +82,11 @@ pytest tests/test_validators.py -v
 ## Project Structure
 
 ```
-financial_analysis/
+stock-analyzer/
 ├── src/
-│   └── financial_analysis/      # Main package
+│   └── stock_analyzer/          # Main package
 │       ├── __init__.py          # Package initialization
+│       ├── __main__.py          # Entry point for python -m stock_analyzer
 │       ├── app.py               # Streamlit application
 │       ├── validators.py        # Data validation module
 │       ├── data_processor.py    # Data loading and processing
@@ -92,17 +95,18 @@ financial_analysis/
 ├── tests/
 │   ├── __init__.py
 │   ├── fixtures/                # Test data files
-│   ├── test_validators.py       # Validator tests (22 tests)
-│   └── test_data_processor.py   # Data processor tests (30 tests)
+│   ├── test_validators.py       # Validator tests
+│   └── test_data_processor.py   # Data processor tests
 ├── .gitignore                   # Git ignore rules
 ├── pytest.ini                   # Pytest configuration
 ├── requirements.txt             # Python dependencies
+├── run.py                       # Launcher script
 └── README.md                    # This file
 ```
 
 ## Data Validation
 
-The application provides comprehensive validation with detailed error messages:
+The application provides comprehensive validation with detailed error messages.
 
 ### Missing Column Example
 ```
@@ -120,15 +124,8 @@ Error 1: Fair
 
 ## Development
 
-### Code Coverage
-
-- `validators.py`: 87% coverage
-- `data_processor.py`: 90% coverage
-- Overall: 74% coverage (including UI modules)
-
 ### Adding New Features
-
-1. Add code to appropriate module in `src/financial_analysis/`
+1. Add code to the appropriate module in `src/stock_analyzer/`
 2. Write tests in `tests/`
 3. Run tests to ensure nothing breaks
 4. Update documentation

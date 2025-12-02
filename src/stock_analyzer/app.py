@@ -3,6 +3,7 @@ Financial Analysis & Valuation Visualization
 Main Streamlit application.
 """
 import streamlit as st
+
 from data_processor import load_and_process_data
 from visualizations import create_single_stock_chart, create_category_comparison_chart
 from ui_components import (
