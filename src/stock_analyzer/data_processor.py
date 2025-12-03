@@ -4,13 +4,24 @@ Handles CSV loading, column mapping, and data cleaning.
 """
 import pandas as pd
 import re
-from validators import (
-    COLUMN_NAMES,
-    ValidationResult,
-    validate_csv_structure,
-    validate_required_columns,
-    validate_data_quality
-)
+
+# Support both direct execution and package import
+try:
+    from .validators import (
+        COLUMN_NAMES,
+        ValidationResult,
+        validate_csv_structure,
+        validate_required_columns,
+        validate_data_quality
+    )
+except ImportError:
+    from validators import (
+        COLUMN_NAMES,
+        ValidationResult,
+        validate_csv_structure,
+        validate_required_columns,
+        validate_data_quality
+    )
 
 
 def clean_currency(x):

@@ -4,21 +4,39 @@ Main Streamlit application.
 """
 import streamlit as st
 
-from data_processor import load_and_process_data
-from visualizations import create_single_stock_chart, create_category_comparison_chart
-from ui_components import (
-    render_header,
-    render_file_uploader,
-    render_filters,
-    render_stock_selector,
-    render_category_selector,
-    render_chart,
-    render_data_table,
-    show_error,
-    show_warning,
-    show_info,
-    show_validation_errors
-)
+# Support both direct execution and package import
+try:
+    from .data_processor import load_and_process_data
+    from .visualizations import create_single_stock_chart, create_category_comparison_chart
+    from .ui_components import (
+        render_header,
+        render_file_uploader,
+        render_filters,
+        render_stock_selector,
+        render_category_selector,
+        render_chart,
+        render_data_table,
+        show_error,
+        show_warning,
+        show_info,
+        show_validation_errors
+    )
+except ImportError:
+    from data_processor import load_and_process_data
+    from visualizations import create_single_stock_chart, create_category_comparison_chart
+    from ui_components import (
+        render_header,
+        render_file_uploader,
+        render_filters,
+        render_stock_selector,
+        render_category_selector,
+        render_chart,
+        render_data_table,
+        show_error,
+        show_warning,
+        show_info,
+        show_validation_errors
+    )
 
 # Page configuration
 st.set_page_config(page_title="Financial Analysis Tool", layout="wide")

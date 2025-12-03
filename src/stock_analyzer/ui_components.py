@@ -3,7 +3,12 @@ UI components module for financial analysis.
 Handles Streamlit UI elements and user interactions.
 """
 import streamlit as st
-from validators import ValidationResult
+
+# Support both direct execution and package import
+try:
+    from .validators import ValidationResult
+except ImportError:
+    from validators import ValidationResult
 
 
 def render_header():

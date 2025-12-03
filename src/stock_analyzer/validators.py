@@ -37,6 +37,11 @@ COLUMN_NAMES = {
         "keywords": ["Closing Price", "Close Price", "收盤價", "Close", "Closing", "收盤"],
         "display": "Closing Price (收盤價)",
         "exclude": ["Date", "日期"]
+    },
+    "CloseDate": {
+        "keywords": ["Close Date", "Closing Date", "收盤日期", "日期", "Date"],
+        "display": "Close Date (收盤日期)",
+        "required": False
     }
 }
 
