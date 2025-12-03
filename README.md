@@ -86,7 +86,6 @@ stock-analyzer/
 ├── src/
 │   └── stock_analyzer/          # Main package
 │       ├── __init__.py          # Package initialization
-│       ├── __main__.py          # Entry point for python -m stock_analyzer
 │       ├── app.py               # Streamlit application
 │       ├── validators.py        # Data validation module
 │       ├── data_processor.py    # Data loading and processing
@@ -100,7 +99,7 @@ stock-analyzer/
 ├── .gitignore                   # Git ignore rules
 ├── pytest.ini                   # Pytest configuration
 ├── requirements.txt             # Python dependencies
-├── run.py                       # Launcher script
+├── __main__.py                  # Application entry point
 └── README.md                    # This file
 ```
 
